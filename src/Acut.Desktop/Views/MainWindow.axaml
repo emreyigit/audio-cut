@@ -1,0 +1,190 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Acut.Desktop.ViewModels"
+        xmlns:converters="using:Acut.Desktop"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
+        x:Class="Acut.Desktop.Views.MainWindow"
+        Title="Acut - Audio Cutter"
+        Width="1000" Height="700"
+        MinWidth="800" MinHeight="600">
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="10">
+        
+        <!-- Top Menu Bar -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
+            <Button Command="{Binding OpenFileCommand}" 
+                    Content="Open File" 
+                    HorizontalAlignment="Left"
+                    Padding="20,8"/>
+            <Button Command="{Binding ExportSegmentCommand}"
+                    Content="Export"
+                    IsEnabled="{Binding CurrentAudioFile, Converter={x:Static converters:ObjectConverters.IsNotNull}}"
+                    Padding="20,8"/>
+        </StackPanel>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Row="1" RowDefinitions="Auto,*,Auto">
+            
+            <!-- File Info Panel -->
+            <Border Grid.Row="0" 
+                    Background="#1E1E1E" 
+                    Padding="15" 
+                    CornerRadius="8"
+                    Margin="0,0,0,15"
+                    IsVisible="{Binding CurrentAudioFile, Converter={x:Static converters:ObjectConverters.IsNotNull}}">
+                <Grid ColumnDefinitions="*,*,*">
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="File Name" Foreground="#999" FontSize="11"/>
+                        <TextBlock Text="{Binding CurrentAudioFile.FileName}" 
+                                   FontSize="14" 
+                                   FontWeight="Medium"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Duration" Foreground="#999" FontSize="11"/>
+                        <TextBlock Text="{Binding CurrentAudioFile.Duration}"
+                                   FontSize="14"
+                                   FontWeight="Medium"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Format" Foreground="#999" FontSize="11"/>
+                        <TextBlock Text="{Binding CurrentAudioFile.Format}" 
+                                   FontSize="14" 
+                                   FontWeight="Medium"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Waveform Visualization Area -->
+            <Border Grid.Row="1" 
+                    Background="#2D2D30" 
+                    CornerRadius="8"
+                    Padding="20"
+                    IsVisible="{Binding CurrentAudioFile, Converter={x:Static converters:ObjectConverters.IsNotNull}}">
+                <Grid RowDefinitions="*,Auto">
+                    <!-- Placeholder for waveform -->
+                    <Canvas Grid.Row="0" x:Name="WaveformCanvas" Background="#1E1E1E"/>
+                    
+                    <!-- Time Selection -->
+                    <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto,Auto,Auto,*,Auto" Margin="0,15,0,0">
+                        <TextBlock Grid.Column="0" Text="Start:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding StartTime}"
+                                 Watermark="00:00:00.000"
+                                 IsReadOnly="True"
+                                 Margin="0,0,10,0"/>
+                        <Button Grid.Column="2"
+                                Command="{Binding SetStartTimeCommand}"
+                                Content="Set Start"
+                                Padding="10,5"
+                                Margin="0,0,20,0"/>
+
+                        <TextBlock Grid.Column="3" Text="End:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <TextBox Grid.Column="4"
+                                 Text="{Binding EndTime}"
+                                 Watermark="00:00:00.000"
+                                 IsReadOnly="True"
+                                 Margin="0,0,10,0"/>
+                        <Button Grid.Column="5"
+                                Command="{Binding SetEndTimeCommand}"
+                                Content="Set End"
+                                Padding="10,5"/>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- Empty State -->
+            <Border Grid.Row="1" 
+                    Background="#2D2D30" 
+                    CornerRadius="8"
+                    IsVisible="{Binding CurrentAudioFile, Converter={x:Static converters:ObjectConverters.IsNull}}">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="15">
+                    <TextBlock Text="📁" FontSize="48" HorizontalAlignment="Center"/>
+                    <TextBlock Text="No file loaded" 
+                               FontSize="18" 
+                               Foreground="#999"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="Click 'Open File' to get started" 
+                               FontSize="14" 
+                               Foreground="#666"
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+        </Grid>
+
+        <!-- Playback Controls -->
+        <Border Grid.Row="2" 
+                Background="#252526" 
+                Padding="15" 
+                CornerRadius="8"
+                Margin="0,10,0,0"
+                IsVisible="{Binding CurrentAudioFile, Converter={x:Static converters:ObjectConverters.IsNotNull}}">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                
+                <!-- Play/Pause/Stop Buttons -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                    <Button Command="{Binding PlayPauseCommand}" Width="40" Height="40">
+                        <TextBlock Text="{Binding IsPlaying, Converter={x:Static converters:ObjectConverters.PlayPauseIcon}}" 
+                                   FontSize="16"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"/>
+                    </Button>
+                    <Button Command="{Binding StopCommand}" Width="40" Height="40">
+                        <TextBlock Text="⏹" FontSize="16"/>
+                    </Button>
+                </StackPanel>
+
+                <!-- Position Display -->
+                <StackPanel Grid.Column="1" 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Spacing="10">
+                    <TextBlock Text="{Binding CurrentPosition}"
+                               FontSize="16"
+                               FontFamily="Consolas"/>
+                    <TextBlock Text="/" Foreground="#666"/>
+                    <TextBlock Text="{Binding CurrentAudioFile.Duration}"
+                               FontSize="16"
+                               Foreground="#999"
+                               FontFamily="Consolas"/>
+                </StackPanel>
+
+                <!-- Volume Control -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="🔊" VerticalAlignment="Center"/>
+                    <Slider Value="{Binding Volume}" 
+                            Minimum="0" 
+                            Maximum="1" 
+                            Width="100"
+                            VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="3" 
+                Background="#007ACC" 
+                Padding="10,8" 
+                CornerRadius="4"
+                Margin="0,10,0,0">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" 
+                           Text="{Binding StatusMessage}" 
+                           VerticalAlignment="Center"/>
+                <ProgressBar Grid.Column="1" 
+                             IsIndeterminate="{Binding IsLoading}"
+                             IsVisible="{Binding IsLoading}"
+                             Width="100"
+                             Height="4"/>
+            </Grid>
+        </Border>
+
+    </Grid>
+
+</Window>
