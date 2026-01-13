@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Controls.Shapes;
 using Acut.Desktop.ViewModels;
+using Acut.Desktop.Controls;
 
 namespace Acut.Desktop.Views;
 
@@ -20,6 +21,21 @@ public partial class MainWindow : Window
 
         // Handle window closing to ensure cleanup
         Closing += OnWindowClosing;
+
+        // Wire up waveform control events
+        this.Loaded += MainWindow_Loaded;
+    }
+
+    private void MainWindow_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var waveformControl = this.FindControl<WaveformControl>("WaveformControl");
+        if (waveformControl != null && DataContext is MainWindowViewModel viewModel)
+        {
+            // Wire up event handlers
+            waveformControl.StartTimeChanged += (s, time) => viewModel.OnWaveformStartTimeChanged(time);
+            waveformControl.EndTimeChanged += (s, time) => viewModel.OnWaveformEndTimeChanged(time);
+            waveformControl.SeekRequested += (s, time) => viewModel.OnWaveformSeekRequested(time);
+        }
     }
 
     private void OnWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)

@@ -267,4 +267,29 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         return CurrentAudioFile != null;
     }
+
+    // Handler for waveform control seek requests
+    public void OnWaveformSeekRequested(TimeSpan time)
+    {
+        if (_playbackService != null)
+        {
+            _playbackService.Seek(time);
+            CurrentPosition = time;
+            StatusMessage = $"Seeked to: {time:hh\\:mm\\:ss\\.fff}";
+        }
+    }
+
+    // Handler for waveform control start time changes
+    public void OnWaveformStartTimeChanged(TimeSpan time)
+    {
+        StartTime = time;
+        StatusMessage = $"Start time: {StartTime:hh\\:mm\\:ss\\.fff}";
+    }
+
+    // Handler for waveform control end time changes
+    public void OnWaveformEndTimeChanged(TimeSpan time)
+    {
+        EndTime = time;
+        StatusMessage = $"End time: {EndTime:hh\\:mm\\:ss\\.fff}";
+    }
 }

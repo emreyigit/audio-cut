@@ -87,14 +87,16 @@ dotnet run --project src/Acut.Desktop/Acut.Desktop.csproj
    - The waveform will be displayed
 
 2. **Set Cut Points**
-   - Enter start time in format: `mm:ss.fff`
-   - Enter end time in format: `mm:ss.fff`
-   - Or use the waveform visualization (to be enhanced)
+   - **Interactive Selection**: Click and drag on the waveform to select a region
+   - **Adjust Selection**: Drag the blue handles at the start/end of the selection to fine-tune
+   - **Seek Position**: Hold Shift and click on the waveform to jump to that position
+   - **Manual Entry**: Use the "Set Start" and "Set End" buttons to set cut points at the current playback position
 
 3. **Preview**
    - Click play button to preview the audio
    - Use volume slider to adjust playback volume
    - Click stop to reset playback position
+   - The white line on the waveform shows the current playback position
 
 4. **Export**
    - Click "Export" button
@@ -147,7 +149,7 @@ Avalonia desktop application with MVVM architecture:
 ### Phase 2: Core Features (In Progress)
 - [x] Cut/trim operations
 - [x] Export to multiple formats
-- [ ] Interactive waveform selection
+- [x] Interactive waveform selection
 - [ ] Zoom in/out on waveform
 
 ### Phase 3: Advanced Features (Planned)

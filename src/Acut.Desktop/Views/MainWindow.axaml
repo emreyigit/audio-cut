@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:Acut.Desktop.ViewModels"
         xmlns:converters="using:Acut.Desktop"
+        xmlns:controls="using:Acut.Desktop.Controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
@@ -60,16 +61,23 @@
             </Border>
 
             <!-- Waveform Visualization Area -->
-            <Border Grid.Row="1" 
-                    Background="#2D2D30" 
+            <Border Grid.Row="1"
+                    Background="#2D2D30"
                     CornerRadius="8"
                     Padding="20"
                     IsVisible="{Binding CurrentAudioFile, Converter={x:Static converters:ObjectConverters.IsNotNull}}">
                 <Grid RowDefinitions="*,Auto">
-                    <!-- Placeholder for waveform -->
-                    <Canvas Grid.Row="0" x:Name="WaveformCanvas" Background="#1E1E1E"/>
-                    
-                    <!-- Time Selection -->
+                    <!-- Interactive Waveform Control -->
+                    <controls:WaveformControl Grid.Row="0"
+                                              x:Name="WaveformControl"
+                                              MinHeight="200"
+                                              WaveformData="{Binding WaveformData}"
+                                              StartTime="{Binding StartTime}"
+                                              EndTime="{Binding EndTime}"
+                                              Duration="{Binding CurrentAudioFile.Duration}"
+                                              CurrentPosition="{Binding CurrentPosition}"/>
+
+                    <!-- Time Selection Info -->
                     <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto,Auto,Auto,*,Auto" Margin="0,15,0,0">
                         <TextBlock Grid.Column="0" Text="Start:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                         <TextBox Grid.Column="1"
